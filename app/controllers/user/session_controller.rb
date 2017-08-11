@@ -45,6 +45,43 @@ class User::SessionController < UserController
     end
   end
 
+  def confirm
+    post_redirect = PostRedirect.find_by_email_token(params[:email_token])
+
+    if post_redirect.nil?
+      render :template => 'user/bad_token'
+      return
+    end
+
+    case post_redirect.circumstance
+    when 'login_as'
+      @user = confirm_user!(post_redirect.user)
+      session[:user_id] = @user.id
+    when 'change_password'
+      unless session[:user_id] == post_redirect.user_id
+        clear_session_credentials
+      end
+
+      session[:change_password_post_redirect_id] = post_redirect.id
+    when 'normal', 'change_email'
+      # !User.stay_logged_in_on_redirect?(nil)
+      # # => true
+      # !User.stay_logged_in_on_redirect?(user)
+      # # => true
+      # !User.stay_logged_in_on_redirect?(admin)
+      # # => false
+      unless User.stay_logged_in_on_redirect?(@user)
+        @user = confirm_user!(post_redirect.user)
+      end
+
+      session[:user_id] = @user.id
+    end
+
+    session[:user_circumstance] = post_redirect.circumstance
+
+    do_post_redirect post_redirect, @user
+  end
+
   private
 
   def user_signin_params
