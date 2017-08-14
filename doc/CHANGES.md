@@ -2,6 +2,7 @@
 
 ## Highlighted Features
 
+* Removed non-responsive assets (Gareth Rees)
 * Fixed problem where the routing filter doesn't recognise default locales with
   underscores properly (Liz Conlan)
 * Added wrapper methods to `AlaveteliLocalization` to be used in preference to
