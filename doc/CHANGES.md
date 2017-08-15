@@ -54,6 +54,8 @@
   notification tester role from the database.
 * Use of the `PRODUCTION_MAILER_RETRIEVER_METHOD` config setting is currently
   not recommended.
+* File-type icons have been moved from `images` to `images/content_type`. Please
+  ensure any direct use of these uses the new path.
 
 ### Changed Templates
 
